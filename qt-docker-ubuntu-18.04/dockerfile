@@ -1,0 +1,20 @@
+FROM ubuntu:18.04                                                                                                           
+ENV QT_X11_NO_MITSHM=1
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install gcc g++ gdb qt4-default qt4-dev-tools make libssl-dev wget -y
+RUN \
+    cd /root && \
+    wget https://github.com/Kitware/CMake/archive/refs/tags/v3.16.3.tar.gz && \
+    tar xf v3.16.3.tar.gz && \
+    rm v3.16.3.tar.gz && \	
+    cd /root/CMake-3.16.3/ && \
+    pwd && \	
+    ./bootstrap --qt-qmake=/usr/lib/x86_64-linux-gnu/qt4/bin/qmake --prefix=/usr/ && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf CMake-3.16.3 && \
+    exit 0
+RUN cmake --version
+RUN qmake --version

@@ -1,0 +1,89 @@
+FROM centos:centos7                                                                                                           
+ENV QT_X11_NO_MITSHM=1
+RUN yum makecache
+RUN yum -y update
+RUN yum -y install wget gcc gcc-c++ gdb make openssl-devel sqlite-devel postgresql-devel unixODBC-devel libiodbc-devel mariadb-devel dbus-devel libjpeg-devel libpng-devel libtiff-devel libmng-devel pulseaudio-libs-devel ruby-devel alsa-lib-devel libX11-devel libXext-devel libXi-devel libXv-devel libXrandr-devel libXcursor-devel libXrender-devel libSM-devel freetype-devel fontconfig-devel perl alsa-lib-devel libicu-devel -y
+RUN \
+    cd /root && \
+    mkdir qt-build && \
+    cd /root/qt-build && \
+    wget https://download.qt.io/archive/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz && \
+    tar xf qt-everywhere-opensource-src-4.8.7.tar.gz && \
+    cd /root/qt-build/qt-everywhere-opensource-src-4.8.7 && \
+    ./configure -prefix /usr                \
+                -sysconfdir       /etc/xdg  \
+                -confirm-license            \
+                -opensource                 \
+                -qt3support                 \
+                -nomake demos               \
+                -nomake examples            \
+                -glib                       \
+                -release                    \
+                -developer-build            \
+                -shared                     \
+                -qt-libmng                  \
+                -accessibility              \
+                -system-zlib                \
+                -system-libjpeg             \
+                -system-libpng              \
+                -system-libtiff             \
+                -system-freetype            \
+                -I /usr/include/freetype2/  \
+                -dbus-linked                \
+                -openssl-linked             \
+                -no-sql-db2                 \
+                -no-sql-ibase               \
+                -no-sql-oci                 \
+                -no-sql-tds                 \
+                -no-sql-symsql              \
+                -system-sqlite              \
+                -qt-sql-psql                \
+                -psql_config /usr/bin/pg_config \
+                -qt-sql-mysql               \
+                -mysql_config /usr/bin/mysql_config \
+                -qt3support                 \
+                -qt-sql-odbc                \
+                -xmlpatterns -exceptions    \
+                -multimedia                 \
+                -audio-backend              \
+                -no-phonon                  \
+                -no-phonon-backend          \
+                -svg                        \
+                -no-webkit                  \
+                -no-javascript-jit          \
+                -script                     \
+                -scripttools                \
+                -stl                        \
+                -declarative                \
+                -no-pch                     \
+                -platform linux-g++         \
+                -no-xinerama                \
+                -no-cups                    \
+                -no-nis                     \
+                -no-separate-debug-info     \
+                -no-mitshm                  \
+                -no-openvg                  \
+                -no-rpath                   \
+                -v               
+    make -j4 && \
+    make install && \
+    cd /root && \
+    rm -rf qt-build && \
+    exit 0
+RUN \
+    cd /root && \
+    wget https://github.com/Kitware/CMake/archive/refs/tags/v3.16.3.tar.gz && \
+    tar xf v3.16.3.tar.gz && \
+    rm v3.16.3.tar.gz && \	
+    cd /root/CMake-3.16.3/ && \
+    pwd && \
+    ln -s /usr/bin/qmake-qt4 /usr/bin/qmake && \	
+    ./bootstrap --qt-qmake=/usr/bin/qmake --prefix=/usr/ && \
+    make -j4 && \
+    make install && \
+    cd .. && \
+    rm -rf CMake-3.16.3 && \
+    exit 0
+RUN ldconfig
+RUN cmake --version
+RUN qmake --version
