@@ -1,8 +1,9 @@
 FROM centos:centos7                                                                                                           
 ENV QT_X11_NO_MITSHM=1
 RUN yum makecache
+RUN yum -y install epel-release
 RUN yum -y update
-RUN yum -y install wget gcc gcc-c++ gdb make openssl-devel sqlite-devel postgresql-devel unixODBC-devel libiodbc-devel mariadb-devel dbus-devel libjpeg-devel libpng-devel libtiff-devel libmng-devel pulseaudio-libs-devel ruby-devel alsa-lib-devel libX11-devel libXext-devel libXi-devel libXv-devel libXrandr-devel libXcursor-devel libXrender-devel libSM-devel freetype-devel fontconfig-devel perl alsa-lib-devel libicu-devel -y
+RUN yum -y install wget gcc gcc-c++ gdb make openssl-devel sqlite-devel postgresql-devel unixODBC-devel libiodbc-devel mariadb-devel dbus-devel libjpeg-devel libpng-devel libtiff-devel libmng-devel pulseaudio-libs-devel ruby-devel alsa-lib-devel libX11-devel libXext-devel libXi-devel libXv-devel libXrandr-devel libXcursor-devel libXrender-devel libSM-devel freetype-devel fontconfig-devel perl alsa-lib-devel libicu-devel qt-creator -y
 RUN \
     cd /root && \
     mkdir qt-build && \
